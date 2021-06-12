@@ -10,6 +10,7 @@
 #include <linux/debugfs.h>
 #include <linux/uaccess.h>
 #include <linux/firmware.h>
+#include <linux/version.h>
 
 #include <linux/of.h>
 #include <linux/of_gpio.h>
@@ -274,30 +275,6 @@ static struct adrf6806_phy_platform_data
 		dev_err(dev, "could not allocate memory for platform data\n");
 		return NULL;
 	}
-/*
-	adrf6806_of_get_bool(iodev, np, "adi,frequency-division-duplex-mode-enable",
-			   &pdata->fdd);
-	adrf6806_of_get_u32(iodev, np, "adi,tx-fastlock-delay-ns", 0,
-			  &pdata->rx_fastlock_delay_ns);
-
-	for (i = 0; i < ARRAY_SIZE(adrf6806_dport_config); i++)
-		pdata->port_ctrl.pp_conf[adrf6806_dport_config[i].reg - 1] |=
-			(of_property_read_bool(np, adrf6806_dport_config[i].name)
-			<< adrf6806_dport_config[i].offset);
-
-	tmp = 0;
-	of_property_read_u32(np, "adi,delay-rx-data", &tmp);
-	pdata->port_ctrl.pp_conf[1] |= (tmp & 0x3);
-
-	tmpl = 2400000000ULL;
-	of_property_read_u64(np, "adi,rx-synthesizer-frequency-hz", &tmpl);
-	pdata->rx_synth_freq = tmpl;
-
-	ret = of_property_read_u32_array(np,
-				"adi,rssi-gain-step-lna-error-table",
-				pdata->rssi_lna_err_tbl, 4);
-
-*/
 	return pdata;
 }
 
@@ -447,7 +424,9 @@ static const struct iio_info adrf6806_phy_info = {
 	.write_raw = &adrf6806_phy_write_raw,
 	.read_avail = adrf6806_phy_read_avail,
 	.attrs = &adrf6806_phy_attribute_group,
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(5,0,0)
 	.driver_module = THIS_MODULE,
+#endif	
 };
 
 //here starts stuff dealing with the extended info
